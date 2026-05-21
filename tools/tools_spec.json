@@ -1,0 +1,285 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "consultar_historico_paciente",
+        "description": "Retorna historico clinico simulado do beneficiario: idade, comorbidades, medicacoes em uso, ultimas consultas e exames recentes.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string",
+              "description": "ID do beneficiario na rede Care Plus"
+            },
+            "janela_meses": {
+              "type": "integer",
+              "description": "Janela retroativa em meses (default 12)",
+              "default": 12
+            }
+          },
+          "required": [
+            "paciente_id"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "verificar_interacoes_medicamentosas",
+        "description": "Verifica interacoes entre uma lista de farmacos. Retorna severidade (leve/moderada/grave) e recomendacoes.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "medicamentos_em_uso": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Lista de farmacos ja em uso pelo paciente"
+            },
+            "novo_medicamento": {
+              "type": "string",
+              "description": "Farmaco que se pretende adicionar"
+            }
+          },
+          "required": [
+            "medicamentos_em_uso",
+            "novo_medicamento"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "agendar_teleconsulta",
+        "description": "Agenda teleconsulta na especialidade indicada para o beneficiario.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string"
+            },
+            "especialidade": {
+              "type": "string",
+              "enum": [
+                "clinica_geral",
+                "cardiologia",
+                "dermatologia",
+                "pediatria",
+                "ginecologia",
+                "psiquiatria",
+                "ortopedia",
+                "oftalmologia"
+              ]
+            },
+            "urgencia": {
+              "type": "string",
+              "enum": [
+                "rotina",
+                "urgente",
+                "emergencia"
+              ]
+            }
+          },
+          "required": [
+            "paciente_id",
+            "especialidade",
+            "urgencia"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "registrar_triagem_sintomas",
+        "description": "Salva internamente no estado do sistema os dados coletados na triagem atual de forma invisivel para o usuario.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string",
+              "description": "ID do beneficiario"
+            },
+            "sintomas_coletados": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Lista de sintomas relatados pelo paciente."
+            },
+            "duracao": {
+              "type": "string",
+              "description": "Tempo desde o inicio dos sintomas."
+            },
+            "intensidade": {
+              "type": "integer",
+              "description": "Nivel de dor ou desconforto de 0 a 10."
+            },
+            "red_flag_detectada": {
+              "type": "boolean",
+              "description": "True se houver um sintoma grave mapeado."
+            },
+            "proxima_acao": {
+              "type": "string",
+              "enum": [
+                "continuar_triagem",
+                "escalada_humana",
+                "encerrar"
+              ]
+            }
+          },
+          "required": [
+            "paciente_id",
+            "sintomas_coletados",
+            "red_flag_detectada",
+            "proxima_acao"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "buscar_protocolo_clinico",
+        "description": "Busca na base de conhecimento o protocolo de triagem adequado para um sintoma especifico (RAG).",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sintoma_principal": {
+              "type": "string",
+              "description": "O sintoma relatado pelo paciente (ex: dor de cabeca, falta de ar)"
+            }
+          },
+          "required": [
+            "sintoma_principal"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "consultar_rede_credenciada",
+        "description": "Busca hospitais ou clinicas fisicas proximas baseadas no CEP e na especialidade necessaria.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "cep_paciente": {
+              "type": "string",
+              "description": "CEP da localizacao atual do paciente"
+            },
+            "tipo_unidade": {
+              "type": "string",
+              "enum": [
+                "pronto_socorro",
+                "clinica",
+                "laboratorio",
+                "hospital_geral"
+              ]
+            }
+          },
+          "required": [
+            "cep_paciente",
+            "tipo_unidade"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "solicitar_renovacao_receita",
+        "description": "Inicia o fluxo para o medico revisar e renovar uma receita de medicamento de uso continuo do paciente.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string"
+            },
+            "nome_medicamento": {
+              "type": "string",
+              "description": "Nome do medicamento de uso continuo a ser renovado"
+            }
+          },
+          "required": [
+            "paciente_id",
+            "nome_medicamento"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "verificar_cobertura_plano",
+        "description": "Verifica se um determinado procedimento, exame ou vacina possui cobertura no plano Care Plus do beneficiario.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string"
+            },
+            "nome_procedimento": {
+              "type": "string",
+              "description": "O nome do exame ou procedimento (ex: Ressonancia, Vacina Gripe)"
+            }
+          },
+          "required": [
+            "paciente_id",
+            "nome_procedimento"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "consultar_resultado_exame",
+        "description": "Busca o status ou o resultado resumido do exame laboratorial ou de imagem mais recente do paciente.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string"
+            },
+            "tipo_exame": {
+              "type": "string",
+              "description": "Ex: hemograma, raio-x, eletrocardiograma, tomografia"
+            }
+          },
+          "required": [
+            "paciente_id",
+            "tipo_exame"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "acionar_emergencia_samu",
+        "description": "Registra uma escalada critica no sistema e gera instrucoes imediatas para o paciente contatar o 192.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "paciente_id": {
+              "type": "string"
+            },
+            "motivo_gravidade": {
+              "type": "string",
+              "description": "O sintoma ou sinal critico que gerou o acionamento (ex: dor no peito, asfixia, sangramento)"
+            }
+          },
+          "required": [
+            "paciente_id",
+            "motivo_gravidade"
+          ]
+        }
+      }
+    }
+  ]
+}
