@@ -5,7 +5,7 @@
 **Projeto:** Agente Clínico Conversacional Seguro para o App Blua
 
 ## 👥 Integrantes
-* Christian Raymundo Diaz - RM: SEU_RM
+* Christian Raymundo Diaz - RM 568324
 * Hanin Atwi – RM 567626 
 * Giulia Martins Ferrari – RM 567574 
 * Dicley Lucas Neto – RM 567588  
