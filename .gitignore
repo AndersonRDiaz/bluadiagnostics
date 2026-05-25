@@ -1,3 +1,6 @@
 .venv/
+.venv-1/
+__pycache__/
 .env
-notebooks/.env
+data/chroma_db/
+.ipynb_checkpoints/

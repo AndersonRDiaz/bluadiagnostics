@@ -1,0 +1,8 @@
+def moderar_conteudo(texto: str) -> bool:
+    """Verifica se a linguagem é abusiva ou ofensiva."""
+    palavras_ofensivas = ["palavrao1", "palavrao2", "ofensa"] # Adicione seu filtro aqui
+    
+    texto_lower = texto.lower()
+    if any(ofensa in texto_lower for ofensa in palavras_ofensivas):
+        return False
+    return True
