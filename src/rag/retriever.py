@@ -1,16 +1,34 @@
+import os
 from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
+from src.rag.embeddings import obter_embeddings 
 
 def buscar_contexto_clinico(pergunta_usuario: str):
-    """Busca os top-3 documentos mais relevantes para a pergunta do paciente."""
+    """Busca os top-3 documentos e retorna o contexto com as fontes para a interface."""
+    
+    # Blindagem de caminho: garante que sempre vai ler da pasta correta, não importa de onde você rode
+    raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    caminho_db = os.path.join(raiz, 'data', 'chroma_db')
+    
     vectorstore = Chroma(
-        persist_directory="data/chroma_db",
-        embedding_function=OpenAIEmbeddings()
+        persist_directory=caminho_db,
+        embedding_function=obter_embeddings()
     )
     
     retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-    resultados = retriever.get_relevant_documents(pergunta_usuario)
+    resultados = retriever.invoke(pergunta_usuario)
     
-    # Junta o texto dos documentos encontrados para enviar ao LLM
-    contexto = "\n\n".join([doc.page_content for doc in resultados])
-    return contexto
+    textos_formatados = []
+    fontes_recuperadas = []
+    
+    for doc in resultados:
+        fonte = doc.metadata.get('source', 'Desconhecido')
+        fontes_recuperadas.append(fonte)
+        texto = f"[Extraído de: {fonte}]\n{doc.page_content}"
+        textos_formatados.append(texto)
+    
+    contexto_final = "\n\n---\n\n".join(textos_formatados)
+    
+    return {
+        "contexto_llm": contexto_final,
+        "fontes_interface": fontes_recuperadas
+    }

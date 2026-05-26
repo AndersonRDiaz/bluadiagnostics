@@ -6,7 +6,7 @@ def test_carregar_prompts():
     with open(caminho, "r", encoding="utf-8") as f:
         conteudo = f.read()
     assert len(conteudo) > 0
-    print("✅ Teste de Prompts: Passou!")
+    print("Teste de Prompts: Passou!")
 
 if __name__ == "__main__":
     test_carregar_prompts()

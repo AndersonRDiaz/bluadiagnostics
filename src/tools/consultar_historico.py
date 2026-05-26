@@ -1,8 +1,7 @@
 from langchain_core.tools import tool
 import json
-from src.tools.schemas import ConsultarHistoricoSchema # <--- Importamos o contrato de validação do input
+from src.tools.schemas import ConsultarHistoricoSchema
 
-# Banco de dados simulado (Mock) em memória
 BANCO_DE_DADOS_PACIENTES = {
     "987654321": {
         "nome": "Maria",
@@ -20,16 +19,18 @@ BANCO_DE_DADOS_PACIENTES = {
     }
 }
 
-@tool(args_schema=ConsultarHistoricoSchema) # <--- Avisamos a ferramenta para usar a validação
+@tool(args_schema=ConsultarHistoricoSchema)
 def consultar_historico_paciente(paciente_id: str, janela_meses: int = 12) -> str:
-    """Retorna historico clinico simulado do beneficiario: idade, comorbidades, medicacoes em uso."""
-    print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id}...")
+    """
+    Busca o histórico clínico completo do paciente na base da Care Plus.
+    Use esta ferramenta SEMPRE que precisar saber a idade, comorbidades ou 
+    medicações que o paciente já toma antes de fazer qualquer prescrição ou triagem.
+    """
+    print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id} (Janela: {janela_meses} meses)...")
     
     paciente = BANCO_DE_DADOS_PACIENTES.get(paciente_id)
     
     if paciente:
-        # Retornamos os dados em formato de string JSON para a IA ler facilmente
         return json.dumps(paciente, ensure_ascii=False)
     else:
-        return json.dumps({"erro": "Paciente não encontrado na base de dados da Care Plus."})
-    
+        return json.dumps({"erro": "Paciente não encontrado na base de dados da Care Plus."}, ensure_ascii=False)
