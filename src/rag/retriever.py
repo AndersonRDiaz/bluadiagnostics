@@ -14,7 +14,7 @@ def buscar_contexto_clinico(pergunta_usuario: str):
         embedding_function=obter_embeddings()
     )
     
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
     resultados = retriever.invoke(pergunta_usuario)
     
     textos_formatados = []
