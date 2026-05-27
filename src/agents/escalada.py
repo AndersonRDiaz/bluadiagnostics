@@ -16,7 +16,7 @@ def invocar_escalada(state: BluaState):
         content="⚠️ Protocolo de segurança ativado. Por favor, desconsidere esta triagem. Procure o pronto-socorro mais próximo ou ligue para o SAMU (192) imediatamente."
     )
     
-    return {
+    return {s
         "messages": [mensagem_alerta],
         "proximo_agente": "Fim" 
     }

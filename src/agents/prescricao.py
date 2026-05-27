@@ -2,14 +2,14 @@ import os
 from dotenv import load_dotenv
 from src.graph.state import BluaState
 from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
-from langchain_community.chat_models import ChatOllama
+from langchain_ollama import ChatOllama
 
 load_dotenv()
 
 def obter_llm_remoto():
     """Inicializa o modelo gpt-oss:120b apontando para a API externa."""
     return ChatOllama(
-        base_url="https://ollama.com",
+        base_url="https://api.ollama.com",
         model="gpt-oss:120b",
         headers={'Authorization': f"Bearer {os.getenv('OLLAMA_API_KEY')}"},
         temperature=0.1 # Temperatura mínima para garantir a estruturação rígida do relatório

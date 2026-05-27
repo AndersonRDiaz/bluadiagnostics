@@ -1,8 +1,9 @@
 from langchain_core.tools import tool
 import json
+from typing import Union, List
 
 @tool
-def verificar_interacoes_medicamentosas(medicamentos_em_uso: list[str] | str, novo_medicamento: str) -> str:
+def verificar_interacoes_medicamentosas(medicamentos_em_uso: Union[List[str], str], novo_medicamento: str) -> str:
     """
     Verifica interações medicamentosas perigosas entre os fármacos que o paciente já toma 
     e um novo medicamento sugerido. Obrigatório usar antes de qualquer recomendação.

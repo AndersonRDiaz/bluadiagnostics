@@ -1,28 +1,28 @@
 # ==============================================================================
 # Care Plus - BluaDiagnostics: Requirements File (Sprint 2)
-# Environment: Python 3.9+
+# Environment: Python 3.10+
 # ==============================================================================
 
 # Core LLM Framework & Orchestration
-langchain>=0.3.0
-langchain-core>=0.3.0
-langchain-community>=0.3.0
-langgraph>=0.2.0
+langchain==0.3.0
+langchain-core==0.3.0
+langchain-community==0.3.0
+langgraph==0.2.0
 
 # Model Integrations (Ollama & Remote Server)
-langchain-ollama>=0.2.0
-ollama>=0.3.0
+langchain-ollama==0.2.0
+ollama==0.3.0
 
 # Vector Database & RAG Pipeline
-chromadb>=0.5.0
-langchain-chroma>=0.1.4
+chromadb==0.5.0
+langchain-chroma==0.1.4
 
 # Data Validation & Configuration
-pydantic>=2.0.0
-python-dotenv>=1.0.0
+pydantic==2.0.0
+python-dotenv==1.0.0
 
 # User Interface (Web Application)
-streamlit>=1.35.0
+streamlit==1.35.0
 
 # Network & Compatibility Fixes (macOS LibreSSL/urllib3 support)
-urllib3>=1.26.18,<2.0.0
+urllib3==1.26.18

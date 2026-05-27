@@ -3,7 +3,7 @@ from langchain_community.vectorstores import Chroma
 from src.rag.embeddings import obter_embeddings 
 
 def buscar_contexto_clinico(pergunta_usuario: str):
-    """Busca os top-3 documentos e retorna o contexto com as fontes para a interface."""
+    """Busca os top-6 documentos e retorna o contexto com as fontes para a interface."""
     
     # Blindagem de caminho: garante que sempre vai ler da pasta correta, não importa de onde você rode
     raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -28,7 +28,10 @@ def buscar_contexto_clinico(pergunta_usuario: str):
     
     contexto_final = "\n\n---\n\n".join(textos_formatados)
     
+    # Transforma em set para remover duplicatas e volta para lista
+    fontes_unicas = list(set(fontes_recuperadas))
+    
     return {
         "contexto_llm": contexto_final,
-        "fontes_interface": fontes_recuperadas
+        "fontes_interface": fontes_unicas
     }
