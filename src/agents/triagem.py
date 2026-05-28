@@ -1,10 +1,9 @@
 import os
 from dotenv import load_dotenv
 from src.graph.state import BluaState
-from langchain_core.messages import AIMessage, SystemMessage, HumanMessage
+from langchain_core.messages import AIMessage, SystemMessage
 from langchain_ollama import ChatOllama
 from src.rag.retriever import buscar_contexto_clinico
-from src.guardrails.red_flags import detectar_red_flags
 from src.tools.consultar_historico import consultar_historico_paciente
 from src.tools.verificar_interacoes import verificar_interacoes_medicamentosas
 from src.tools.agendar_teleconsulta import agendar_teleconsulta
@@ -14,16 +13,15 @@ load_dotenv()
 def obter_llm_remoto():
     """Inicializa o modelo configurado para uso das tools."""
     llm = ChatOllama(
-        base_url="https://api.ollama.com", 
+        base_url="https://api.ollama.com",
         model="gpt-oss:120b",
         temperature=0.2
     )
-    # Amarrando as ferramentas ao LLM (Requisito da Frente A)
     tools = [consultar_historico_paciente, verificar_interacoes_medicamentosas, agendar_teleconsulta]
     return llm.bind_tools(tools)
 
 def carregar_prompt_triagem() -> str:
-    """Lê os arquivos markdown de prompt e combina as instruções para evitar hard-code."""
+    """Lê os arquivos markdown de prompt e combina as instruções."""
     raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     
     caminho_base = os.path.join(raiz, 'prompts', 'system_prompt.md')
@@ -38,46 +36,43 @@ def carregar_prompt_triagem() -> str:
 
 def invocar_triagem(state: BluaState):
     print("🩺 [TRIAGEM] Assumindo o atendimento e invocando modelo...")
-    ultima_mensagem = state["messages"][-1].content
     
+    # Busca o RAG usando apenas a última mensagem para manter o foco da busca
+    ultima_mensagem = state["messages"][-1].content
     dados_rag = buscar_contexto_clinico(ultima_mensagem)
     contexto_clinico = dados_rag["contexto_llm"]
     fontes = dados_rag["fontes_interface"]
     
-    if detectar_red_flags(ultima_mensagem):
-        print("⚠️ [TRIAGEM] Sintoma crítico detectado! Roteando direto para Escalada.")
-        return {
-            "red_flag_detectada": True, 
-            "proximo_agente": "Escalada" 
-        }
-
     llm = obter_llm_remoto()
     
-    # Injeção dinâmica do prompt modular e dos dados do RAG
-    mensagens_prompt = [
-        SystemMessage(content=f"{carregar_prompt_triagem()}\n\nPROTOCOLOS CLÍNICOS RELEVANTES:\n{contexto_clinico}"),
-        HumanMessage(content=ultima_mensagem)
-    ]
+    # Injeção dinâmica do prompt modular com RAG
+    prompt_completo = f"{carregar_prompt_triagem()}\n\nPROTOCOLOS CLÍNICOS RELEVANTES:\n{contexto_clinico}"
+    mensagem_sistema = SystemMessage(content=prompt_completo)
     
-    resposta_modelo = llm.invoke(mensagens_prompt)
-    fontes_formatadas = f"\n\n*(Fontes consultadas: {', '.join([os.path.basename(f) for f in fontes])})*"
+    # MANTENDO A MEMÓRIA: Passamos o SystemMessage + Todo o histórico da conversa
+    mensagens_para_llm = [mensagem_sistema] + state["messages"]
     
-    if getattr(resposta_modelo, 'tool_calls', None):
-        nome_ferramenta = resposta_modelo.tool_calls[0]['name']
-        print(f"🛠️ [TRIAGEM] O modelo decidiu acionar a ferramenta: {nome_ferramenta}")
-        
-        aviso_tool = f"*(Ação do sistema: Consultando {nome_ferramenta}...)*\nPor favor, aguarde um instante enquanto verifico seus dados."
-        conteudo_final = aviso_tool + fontes_formatadas
-        
+    # Invoca o modelo
+    resposta_modelo = llm.invoke(mensagens_para_llm)
+    
+    # Tratamento de Retorno
+    if resposta_modelo.tool_calls:
+        print(f"🛠️ [TRIAGEM] O modelo decidiu acionar ferramentas: {[t['name'] for t in resposta_modelo.tool_calls]}")
+        # IMPORTANTE: Retorna a mensagem original com o payload das tools.
+        # O próximo agente deve ser o nó responsável por rodar as funções Python reais.
         return {
-            "messages": [AIMessage(content=conteudo_final)],
-            "proximo_agente": "Supervisor" 
+            "messages": [resposta_modelo],
+            "proximo_agente": "ExecutadorTools" 
         }
     else:
         print("✅ [TRIAGEM] Geração de texto concluída com sucesso.")
-        conteudo_final = resposta_modelo.content + fontes_formatadas
+        # Se for apenas texto, anexamos as fontes e retornamos
+        fontes_formatadas = f"\n\n*(Fontes consultadas: {', '.join([os.path.basename(f) for f in fontes])})*"
+        
+        # Cria uma nova AIMessage modificada com as fontes concatenadas
+        mensagem_final = AIMessage(content=resposta_modelo.content + fontes_formatadas)
         
         return {
-            "messages": [AIMessage(content=conteudo_final)],
+            "messages": [mensagem_final],
             "proximo_agente": "Fim"
         }

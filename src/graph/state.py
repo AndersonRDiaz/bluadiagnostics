@@ -22,6 +22,9 @@ class BluaState(TypedDict):
     # O Guardrail principal do sistema
     red_flag_detectada: bool
     
+    # NOVO: Guarda os detalhes ricos da emergência (categoria, protocolo, orientação)
+    red_flag_detalhes: Optional[dict]
+    
     # ==========================================
     # CONTROLE DE ROTEAMENTO (LANGGRAPH)
     # ==========================================
