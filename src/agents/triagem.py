@@ -7,6 +7,8 @@ from src.rag.retriever import buscar_contexto_clinico
 from src.tools.consultar_historico import consultar_historico_paciente
 from src.tools.verificar_interacoes import verificar_interacoes_medicamentosas
 from src.tools.agendar_teleconsulta import agendar_teleconsulta
+from src.tools.buscar_exames import buscar_exames_paciente
+from src.tools.registrar_sintoma import registrar_sintoma_vital
 
 load_dotenv()
 
@@ -17,7 +19,9 @@ def obter_llm_remoto():
         model="gpt-oss:120b",
         temperature=0.2
     )
-    tools = [consultar_historico_paciente, verificar_interacoes_medicamentosas, agendar_teleconsulta]
+    tools = [consultar_historico_paciente, verificar_interacoes_medicamentosas, agendar_teleconsulta,buscar_exames_paciente,        # nova
+        registrar_sintoma_vital ]
+    
     return llm.bind_tools(tools)
 
 def carregar_prompt_triagem() -> str:

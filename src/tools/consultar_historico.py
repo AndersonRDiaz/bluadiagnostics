@@ -16,6 +16,27 @@ BANCO_DE_DADOS_PACIENTES = {
         "comorbidades": ["Diabetes Tipo 2"],
         "medicacoes_em_uso": ["Metformina 850mg", "Insulina Glargina"],
         "ultimas_consultas": ["01/2026 com Dra. Silva (Endocrinologia)"]
+    },
+    "444555666": {
+        "nome": "Ana Oliveira",
+        "idade": 28,
+        "comorbidades": [],
+        "medicacoes_em_uso": [],
+        "ultimas_consultas": ["12/2025 com Dr. Pedro (Clínica Geral)"]
+    },
+    "777888999": {
+        "nome": "Carlos Mendes",
+        "idade": 52,
+        "comorbidades": ["Asma", "Rinite Alérgica"],
+        "medicacoes_em_uso": ["Salbutamol spray", "Loratadina 10mg"],
+        "ultimas_consultas": ["02/2026 com Dra. Costa (Pneumologia)"]
+    },
+    "321654987": {
+        "nome": "Fernanda Lima",
+        "idade": 45,
+        "comorbidades": ["Hipotireoidismo", "Ansiedade"],
+        "medicacoes_em_uso": ["Levotiroxina 50mcg", "Clonazepam 0,5mg"],
+        "ultimas_consultas": ["04/2026 com Dr. Ramos (Psiquiatria)"]
     }
 }
 
@@ -26,9 +47,12 @@ def consultar_historico_paciente(paciente_id: str, janela_meses: int = 12) -> st
     Use esta ferramenta SEMPRE que precisar saber a idade, comorbidades ou 
     medicações que o paciente já toma antes de fazer qualquer prescrição ou triagem.
     """
-    print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id} (Janela: {janela_meses} meses)...")
+    # Limpa o ID — remove espaços, pontos e traços que o LLM pode inserir
+    paciente_id_limpo = str(paciente_id).strip().replace(".", "").replace("-", "").replace(" ", "")
     
-    paciente = BANCO_DE_DADOS_PACIENTES.get(paciente_id)
+    print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id_limpo} (Janela: {janela_meses} meses)...")
+    
+    paciente = BANCO_DE_DADOS_PACIENTES.get(paciente_id_limpo)
     
     if paciente:
         return json.dumps(paciente, ensure_ascii=False)
