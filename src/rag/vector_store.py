@@ -1,6 +1,6 @@
 import os
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from src.rag.chunking import obter_splitter
 from src.rag.embeddings import obter_embeddings
 

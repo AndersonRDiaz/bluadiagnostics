@@ -9,14 +9,14 @@ def invocar_supervisor(state: BluaState):
     
     mensagem = state["messages"][-1].content
 
-    # 1. Aplicação dos Guardrails de Entrada (Escopo e Moderação)
+    # Aplicação dos Guardrails de Entrada (Escopo e Moderação)
     if not moderar_conteudo(mensagem) or not validar_escopo(mensagem):
         print("🚫 [SUPERVISOR] Conteúdo fora de escopo ou ofensivo. Encerrando.")
         # Adicionando um aviso para a interface não ficar em silêncio
         alerta = AIMessage(content="Desculpe, só posso ajudar com questões médicas respeitosas relacionadas à Care Plus.")
         return {"messages": [alerta], "proximo_agente": "Fim"}
 
-    # 2. Guardrail de Red Flags Dinâmico
+    # Guardrail de Red Flags Dinâmico
     # O supervisor agora varre a mensagem usando o nosso novo dicionário rico
     detalhes_red_flag = detectar_red_flags_detalhado(mensagem)
 
@@ -30,6 +30,11 @@ def invocar_supervisor(state: BluaState):
             "red_flag_detalhes": detalhes_red_flag,
             "proximo_agente": "Escalada"
         }
+    
+    palavras_prescricao = ["prescri", "remédio", "medicamento", "receita", "pós-consulta", "pos-consulta"]
+    if any(p in mensagem.lower() for p in palavras_prescricao):
+        print("💊 [SUPERVISOR] Intent de prescrição detectada.")
+        return {"proximo_agente": "Prescricao"}
 
     # 3. Roteamento Padrão
     print("👔 [SUPERVISOR] Contexto seguro. Direcionando para TRIAGEM.")

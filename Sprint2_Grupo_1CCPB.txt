@@ -1,0 +1,20 @@
+======================================================
+FIAP CHALLENGE 2026.1 - Care Plus (BluaDiagnostics)
+Entrega Final - Sprint 2
+======================================================
+
+1. INTEGRANTES DO GRUPO:
+- Christian Raymundo Diaz - RM 568324
+- Hanin Atwi - RM 567626 
+- Giulia Martis Ferrari - RM 567574 
+- Dicley Lucas Neto - RM 567588 
+- Pedro Ivson Falcão de Leucas - RM 568522
+
+2. REPOSITÓRIO GITHUB (Público):
+Link: 
+
+3. VÍDEO DE DEMONSTRAÇÃO (YouTube - Não Listado):
+Link: [Cole o link do vídeo de 3 minutos aqui]
+
+4. RELATÓRIO TÉCNICO FINAL:
+Link: [Cole o link direto para o arquivo relatorio_final.md no GitHub]

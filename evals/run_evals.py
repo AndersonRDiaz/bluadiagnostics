@@ -33,7 +33,7 @@ def rodar_avaliacoes():
         id_teste = teste["id"]
         
         if categoria not in metricas["categorias_avaliadas"]:
-            metricas["categorias_avaliadas"][categoria] = {"processados": 0}
+            metricas["categorias_avaliadas"][categoria] = {"processados": 0, "acertos": 0}
             
         config = {"configurable": {"thread_id": f"test_{id_teste}"}}
         
@@ -77,7 +77,7 @@ def rodar_avaliacoes():
 
         # Atualiza métricas de acerto
         if passou:
-            metricas["categorias_avaliadas"][categoria] = {"processados": 0, "acertos": 0}
+            metricas["categorias_avaliadas"][categoria]["acertos"] += 1
             
         # ==========================================
         

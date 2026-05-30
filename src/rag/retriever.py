@@ -1,6 +1,6 @@
 import os
-from langchain_community.vectorstores import Chroma
-from src.rag.embeddings import obter_embeddings 
+from langchain_chroma import Chroma
+from src.rag.embeddings import obter_embeddings
 
 def buscar_contexto_clinico(pergunta_usuario: str):
     """Busca os top-6 documentos e retorna o contexto com as fontes para a interface."""

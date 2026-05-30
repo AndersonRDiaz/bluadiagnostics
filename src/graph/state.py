@@ -13,20 +13,17 @@ class BluaState(TypedDict):
     # e não que sobrescrevam as mensagens anteriores.
     messages: Annotated[list[BaseMessage], add_messages]
     
-    # ==========================================
-    # CONTEXTO CLÍNICO E DE NEGÓCIO
-    # ==========================================
+    # CONTEXTO CLÍNICO E DE NEGÓCIO -------
+
     paciente_id: Optional[str]
     sintomas_coletados: List[str]
     
     # O Guardrail principal do sistema
     red_flag_detectada: bool
     
-    # NOVO: Guarda os detalhes ricos da emergência (categoria, protocolo, orientação)
+    # Guarda os detalhes ricos da emergência (categoria, protocolo, orientação)
     red_flag_detalhes: Optional[dict]
     
-    # ==========================================
     # CONTROLE DE ROTEAMENTO (LANGGRAPH)
-    # ==========================================
     # Indica qual será o próximo agente a atuar na conversa
     proximo_agente: str

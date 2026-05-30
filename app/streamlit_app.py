@@ -67,8 +67,24 @@ else:
                 resultado = app.invoke(estado_inicial, config)
                 resposta_final = resultado['messages'][-1].content
                 
-                st.markdown(resposta_final)
-                st.session_state.messages.append({"role": "assistant", "content": resposta_final})
+                # Remove as fontes do texto da resposta para exibir separado
+                if "*(Fontes consultadas:" in resposta_final:
+                    partes = resposta_final.split("*(Fontes consultadas:")
+                    texto_limpo = partes[0].strip()
+                    fontes_texto = partes[1].replace(")*", "").strip()
+                else:
+                    texto_limpo = resposta_final
+                    fontes_texto = None
+                
+                st.markdown(texto_limpo)
+
+                # Mostra fontes do RAG de forma elegante
+                if fontes_texto and fontes_texto != "":
+                    with st.expander("📚 Fontes consultadas pelo RAG"):
+                        for fonte in fontes_texto.split(","):   
+                            st.markdown(f"- `{fonte.strip()}`")
+                
+                st.session_state.messages.append({"role": "assistant", "content": texto_limpo})
                 
                 # Detecção visual da Escalada: Se o SAMU foi chamado, ativa a trava
                 if "192" in resposta_final or "SAMU" in resposta_final.upper():

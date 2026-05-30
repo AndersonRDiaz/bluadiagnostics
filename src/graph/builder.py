@@ -35,7 +35,6 @@ def compilar_grafo():
     # Define o ponto de entrada
     workflow.add_edge(START, "Supervisor")
     
-    
     # Roteamentos Condicionais
     workflow.add_conditional_edges(
         "Supervisor", 
@@ -43,6 +42,7 @@ def compilar_grafo():
         {
             "Triagem": "Triagem",
             "Escalada": "Escalada",
+            "Prescricao": "Prescricao",
             "Fim": END
         }
     )
@@ -54,6 +54,7 @@ def compilar_grafo():
             "Escalada": "Escalada",
             "Supervisor": "Supervisor",
             "ExecutadorTools": "ExecutadorTools", # Triagem manda para as tools
+            "Prescricao": "Prescricao",
             "Fim": END
         }
     )
