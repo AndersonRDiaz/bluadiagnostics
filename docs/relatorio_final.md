@@ -32,6 +32,8 @@ A persona escolhida é o **beneficiário final** — adulto entre 25 e 60 anos q
 
 ## 2. Arquitetura do Sistema
 
+[docs/arquitetura_sistema.png]
+
 ### 2.1 Visão Geral
 
 O sistema é composto por quatro camadas principais que operam em sequência:
@@ -112,7 +114,9 @@ As três tools obrigatórias foram implementadas com retornos simulados realista
 
 - **Maria Silva** (ID: 987654321) — 34 anos, hipertensa, em uso de Losartana 50mg, última consulta em 03/2026 com Dr. João (Cardiologia).
 - **João Santos** (ID: 111222333) — 67 anos, diabético tipo 2, em uso de Metformina 850mg e Insulina Glargina, última consulta em 01/2026 com Dra. Silva (Endocrinologia).
-
+- **Ana Oliveira** (ID: 444555666) — 28 anos, sem comorbidades ou medicações contínuas, última consulta em 12/2025 com Dr. Pedro (Clínica Geral).
+- **Carlos Mendes** (ID: 777888999) — 52 anos, portador de Asma e Rinite Alérgica, em uso de Salbutamol spray e Loratadina 10mg, última consulta em 02/2026 com Dra. Costa (Pneumologia).
+- **Fernanda Lima** (ID: 321654987) — 45 anos, com Hipotireoidismo e Ansiedade, em uso de Levotiroxina 50mcg e Clonazepam 0,5mg, última consulta em 04/2026 com Dr.
 
 ### 4.2 Tools Implementadas
 
@@ -121,6 +125,10 @@ As três tools obrigatórias foram implementadas com retornos simulados realista
 **`verificar_interacoes_medicamentosas`** — verifica interações entre os medicamentos em uso do paciente e um novo medicamento proposto, retornando severidade (`ALERTA_GRAVE`, `MODERADO`, `NENHUMA`) e recomendações clínicas.
 
 **`agendar_teleconsulta`** — agenda teleconsulta na especialidade indicada com nível de urgência (`rotina`, `urgente`, `emergencia`), retornando data, hora e link simulado de acesso.
+
+**`buscar_exames_paciente`** — localiza e retorna laudos e resultados de exames laboratoriais ou de imagem recentes associados ao ID do paciente, fundamentando a triagem atual com dados diagnósticos prévios.
+
+**`registrar_sintoma_vital`** — estrutura e padroniza o registro de sinais e métricas vitais informados pelo paciente (como nível de dor ou temperatura), preparando o encapsulamento seguro da informação para a decisão de escalada ou envio ao médico.
 
 ---
 
@@ -177,7 +185,7 @@ O eval set foi executado automaticamente via `evals/run_evals.py` sobre o sistem
 | v2 | Adição das seções PAPEL, ESCOPO, RESTRIÇÕES | Jailbreak bloqueado, mas red flags ainda passavam para o LLM |
 | v3 | Red flag detection movida para o Supervisor (pré-LLM) | Red flags com tempo ~0s, sem custo de tokens |
 | v4 | Few-shot examples clínicos adicionados | Happy path com respostas mais estruturadas e perguntas de triagem mais completas |
-
+| v5 | Ajuste de Hiperparâmetros (temperature=0.0, top_p=0.1)| Criação de um modelo totalmente determinístico, eliminando a alucinação de protocolos clínicos |
 ---
 
 ## 7. Limitações e Riscos
@@ -185,14 +193,14 @@ O eval set foi executado automaticamente via `evals/run_evals.py` sobre o sistem
 ### 7.1 Limitações Técnicas
 
 - **Falso positivo de prescrição:** palavras como "receita" em contexto culinário ativam o roteamento para o agente de Prescrição. A solução seria usar um classificador de intent mais robusto em vez de palavras-chave simples.
-- **Personas sintéticas limitadas:** o banco de dados de pacientes contém apenas 2 personas. Em produção, seria necessário integrar com o sistema real de beneficiários da Care Plus.
+- **Personas sintéticas limitadas:** o banco de dados de pacientes contém apenas 5 personas. Em produção, seria necessário integrar com o sistema real de beneficiários da Care Plus.
 - **RAG em português:** o modelo nomic-embed-text tem performance ligeiramente inferior para textos técnicos em português em comparação com modelos treinados especificamente para o idioma.
 
 ### 7.2 Riscos Clínicos e Mitigações
 
 | Risco | Mitigação implementada |
 |---|---|
-| Alucinação clínica | RAG sobre base validada + restrição no prompt + revisão médica obrigatória |
+| Alucinação clínica | RAG sobre base validada + restrição explícita no prompt + revisão médica obrigatória |
 | Diagnóstico definitivo | Restrição explícita no system prompt + casos jailbreak no eval set |
 | Subtriagem de red flag | Detecção pré-LLM por dicionário de palavras-chave + escalada automática |
 | Vazamento de PHI | Modelo local via Ollama — dados nunca saem da máquina |

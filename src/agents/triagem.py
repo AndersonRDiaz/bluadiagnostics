@@ -17,10 +17,16 @@ def obter_llm_remoto():
     llm = ChatOllama(
         base_url="https://api.ollama.com",
         model="gpt-oss:120b",
-        temperature=0.2
+        temperature=0.0,  # Zera a criatividade para evitar alucinação clínica
+        top_p=0.1         # Foca no vocabulário mais provável
     )
-    tools = [consultar_historico_paciente, verificar_interacoes_medicamentosas, agendar_teleconsulta,buscar_exames_paciente,        # nova
-        registrar_sintoma_vital ]
+    tools = [
+        consultar_historico_paciente, 
+        verificar_interacoes_medicamentosas, 
+        agendar_teleconsulta,
+        buscar_exames_paciente,        
+        registrar_sintoma_vital 
+    ]
     
     return llm.bind_tools(tools)
 

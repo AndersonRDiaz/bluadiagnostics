@@ -9,7 +9,7 @@ def remover_acentos(texto: str) -> str:
 def validar_escopo(texto: str) -> bool:
     """Verifica se a interação do paciente permanece dentro do escopo médico."""
     assuntos_proibidos = [
-        "politica", "futebol", "religiao", "receita de bolo", "investimento",
+        "politica","religiao", "receita de bolo", "investimento",
         "cartao de credito", "banco", "financeiro", 
         "cachorro", "gato", "veterinario", "pet",                        
         "imposto de renda", "receita federal", "tributario", "contador", 

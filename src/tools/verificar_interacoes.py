@@ -1,8 +1,9 @@
 from langchain_core.tools import tool
 import json
 from typing import Union, List
+from src.tools.schemas import VerificarInteracoesSchema
 
-@tool
+@tool(args_schema=VerificarInteracoesSchema)
 def verificar_interacoes_medicamentosas(medicamentos_em_uso: Union[List[str], str], novo_medicamento: str) -> str:
     """
     Verifica interações medicamentosas perigosas entre os fármacos que o paciente já toma 

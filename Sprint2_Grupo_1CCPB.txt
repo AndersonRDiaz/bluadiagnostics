@@ -14,7 +14,7 @@ Entrega Final - Sprint 2
 Link: 
 
 3. VÍDEO DE DEMONSTRAÇÃO (YouTube - Não Listado):
-Link: [Cole o link do vídeo de 3 minutos aqui]
+Link:
 
 4. RELATÓRIO TÉCNICO FINAL:
-Link: [Cole o link direto para o arquivo relatorio_final.md no GitHub]
+Link: 

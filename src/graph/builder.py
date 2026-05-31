@@ -8,9 +8,17 @@ from src.graph.nodes import supervisor_node, triagem_node, escalada_node, prescr
 from src.tools.consultar_historico import consultar_historico_paciente
 from src.tools.verificar_interacoes import verificar_interacoes_medicamentosas
 from src.tools.agendar_teleconsulta import agendar_teleconsulta
+from src.tools.buscar_exames import buscar_exames_paciente
+from src.tools.registrar_sintoma import registrar_sintoma_vital
 
 # Agora o Python sabe quem são essas funções e não vai dar NameError
-tools_disponiveis = [consultar_historico_paciente, verificar_interacoes_medicamentosas, agendar_teleconsulta]
+tools_disponiveis = [
+    consultar_historico_paciente, 
+    verificar_interacoes_medicamentosas, 
+    agendar_teleconsulta,
+    buscar_exames_paciente,
+    registrar_sintoma_vital
+]
 executador_tools_node = ToolNode(tools_disponiveis)
 
 def roteamento_dinamico(state: BluaState):
@@ -21,7 +29,6 @@ def roteamento_dinamico(state: BluaState):
     """
     return state.get("proximo_agente", END)
 
-
 def compilar_grafo():
     workflow = StateGraph(BluaState)
     
@@ -30,7 +37,7 @@ def compilar_grafo():
     workflow.add_node("Triagem", triagem_node)
     workflow.add_node("Escalada", escalada_node)
     workflow.add_node("Prescricao", prescricao_node)
-    workflow.add_node("ExecutadorTools", executador_tools_node) # <-- Agora o nó existe!
+    workflow.add_node("ExecutadorTools", executador_tools_node) 
     
     # Define o ponto de entrada
     workflow.add_edge(START, "Supervisor")

@@ -1,6 +1,27 @@
+# Ambientes Virtuais
 .venv/
 .venv-1/
+
+# Arquivos Compilados do Python e Jupyter
 __pycache__/
-.env
-data/chroma_db/
+*.pyc
 .ipynb_checkpoints/
+
+# Variáveis de Ambiente (Segurança)
+.env
+
+# Bancos de Dados e RAG
+data/chroma_db/
+*.db
+*.sqlite3
+
+# Testes (Pytest)
+.pytest_cache/
+
+# Editores de Código (VS Code, etc)
+.vscode/
+.idea/
+
+# Arquivos de Sistema Operacional (Windows/Mac)
+Thumbs.db
+.DS_Store

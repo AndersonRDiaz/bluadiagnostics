@@ -9,11 +9,17 @@ def invocar_supervisor(state: BluaState):
     
     mensagem = state["messages"][-1].content
 
+    moderacao = moderar_conteudo(mensagem)
+    escopo = validar_escopo(mensagem)
+
+    print(f"🔍 [DEBUG] moderacao={moderacao}")
+    print(f"🔍 [DEBUG] escopo={escopo}")
+    print(f"🔍 [DEBUG] mensagem='{mensagem[:150]}'")
+
     # Aplicação dos Guardrails de Entrada (Escopo e Moderação)
-    if not moderar_conteudo(mensagem) or not validar_escopo(mensagem):
+    if not moderacao or not escopo:
         print("🚫 [SUPERVISOR] Conteúdo fora de escopo ou ofensivo. Encerrando.")
-        # Adicionando um aviso para a interface não ficar em silêncio
-        alerta = AIMessage(content="Desculpe, só posso ajudar com questões médicas respeitosas relacionadas à Care Plus.")
+        alerta = AIMessage(content="Desculpe, só posso ajudar com questões médicas relacionadas à Care Plus.")
         return {"messages": [alerta], "proximo_agente": "Fim"}
 
     # Guardrail de Red Flags Dinâmico
