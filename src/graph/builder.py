@@ -4,30 +4,17 @@ from langgraph.checkpoint.memory import MemorySaver
 from src.graph.state import BluaState
 from src.graph.nodes import supervisor_node, triagem_node, escalada_node, prescricao_node
 
-# IMPORTAR A SUA FUNÇÃO DE GUARDRAIL
-from src.tools.consultar_historico import consultar_historico_paciente
-from src.tools.verificar_interacoes import verificar_interacoes_medicamentosas
-from src.tools.agendar_teleconsulta import agendar_teleconsulta
-from src.tools.buscar_exames import buscar_exames_paciente
-from src.tools.registrar_sintoma import registrar_sintoma_vital
+from src.tools.lista_tools import tools_disponiveis
 
-# Agora o Python sabe quem são essas funções e não vai dar NameError
-tools_disponiveis = [
-    consultar_historico_paciente, 
-    verificar_interacoes_medicamentosas, 
-    agendar_teleconsulta,
-    buscar_exames_paciente,
-    registrar_sintoma_vital
-]
 executador_tools_node = ToolNode(tools_disponiveis)
 
 def roteamento_dinamico(state: BluaState):
-    """
-    Função universal de roteamento.
-    Como os nós já processaram a lógica e definiram qual é o próximo passo
-    no campo 'proximo_agente', a aresta só precisa ler e obedecer.
-    """
     return state.get("proximo_agente", END)
+
+# --- NOVA FUNÇÃO DE ROTEAMENTO PARA AS TOOLS ---
+def roteamento_pos_tools(state: BluaState):
+    """Lê quem chamou a tool e devolve a execução para o mesmo agente."""
+    return state.get("agente_ativo", "Supervisor")
 
 def compilar_grafo():
     workflow = StateGraph(BluaState)
@@ -66,12 +53,30 @@ def compilar_grafo():
         }
     )
 
-    # Se o Executador de Tools terminar, ele devolve a resposta para a Triagem analisar
-    workflow.add_edge("ExecutadorTools", "Triagem")
-    
-    # Fim dos processos
-    workflow.add_edge("Escalada", END)
-    workflow.add_edge("Prescricao", END)
+    # --- NOVO: Arestas condicionais da Prescrição ---
+    workflow.add_conditional_edges(
+        "Prescricao",
+        roteamento_dinamico,
+        {
+            "ExecutadorTools": "ExecutadorTools",
+            "Supervisor": "Supervisor",
+            "Fim": END
+        }
+    )
 
+    # --- CORREÇÃO CRÍTICA DO BUg ---
+    # O Executador de Tools agora usa roteamento condicional para voltar ao agente correto
+    workflow.add_conditional_edges(
+        "ExecutadorTools", 
+        roteamento_pos_tools,
+        {
+            "Triagem": "Triagem",
+            "Prescricao": "Prescricao",
+            "Supervisor": "Supervisor"
+        }
+    )
+
+    workflow.add_edge("Escalada", END)
+    
     memoria = MemorySaver()
     return workflow.compile(checkpointer=memoria)

@@ -95,7 +95,8 @@ else:
                     "fontes": fontes_recuperadas
                 })
                 
-                # Detecção de escalada usando a flag do grafo — não depende de palavras na resposta
-                if resultado.get("red_flag_detectada") == True:
+                # Detecção de escalada lendo o alerta gerado pelo nó de emergência
+                texto_lower = texto_limpo.lower()
+                if "samu" in texto_lower or "pronto-socorro" in texto_lower or "emergência" in texto_lower:
                     st.session_state.emergencia = True
                     st.rerun()

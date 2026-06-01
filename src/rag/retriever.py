@@ -3,7 +3,7 @@ from langchain_chroma import Chroma
 from src.rag.embeddings import obter_embeddings
 
 def buscar_contexto_clinico(pergunta_usuario: str):
-    """Busca os top-6 documentos e retorna o contexto com as fontes para a interface."""
+    """Busca os top-4 documentos e retorna o contexto com as fontes para a interface."""
     
     # Blindagem de caminho: garante que sempre vai ler da pasta correta, não importa de onde você rode
     raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -14,7 +14,7 @@ def buscar_contexto_clinico(pergunta_usuario: str):
         embedding_function=obter_embeddings()
     )
     
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
     resultados = retriever.invoke(pergunta_usuario)
     
     textos_formatados = []

@@ -24,16 +24,17 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         nome="cardiovascular",
         severidade="emergencia",
         termos=[
-            # Dor torácica
-            "dor no peito", "dor torácica", "dor toracica",
-            "dor forte no peito","aperto no peito", "peso no peito",
-            # Irradiação clássica de IAM
-            "irradia para o braço", "irradia para o braco",
-            "dor no braço esquerdo", "dor no braco esquerdo",
-            "dor no ombro esquerdo", "dor no maxilar",
+            # Termos médicos e variações
+            "dor no peito", "dor torácica", "dor toracica", "infarto", "parada cardíaca", "parada cardiaca",
+            "dor forte no peito", "aperto no peito", "peso no peito", "pressão no peito", "pressao no peito","dor muito forte no peito",
+            # Irradiação
+            "irradia para o braço", "irradia para o braco", "dor no braço esquerdo", "dor no braco esquerdo",
+            "dor no ombro esquerdo", "dor no maxilar", "dor no pescoço e peito", "dor na mandíbula","irradia pro braço",
+            # Coloquialismos e gírias
+            "peito rasgando", "coração apertado", "coracao apertado", "pontada no coração", "pontada no coracao",
+            "coração acelerado com dor", "tendo um infarto", "tendo um treco", "peito doendo muito",
             # Sinais acompanhantes
-            "sudorese fria", "suor frio", "palpitação forte", "palpitacao forte",
-            "coração acelerado com dor", "infarto", "parada cardíaca", "parada cardiaca",
+            "sudorese fria", "suor frio", "palpitação forte", "palpitacao forte", "formigamento no braço", "formigamento no braco",
         ],
         orientacao="Sintoma compatível com síndrome coronariana aguda (infarto). Não aguarde — ligue imediatamente para o SAMU (192).",
         protocolo_escalada="SAMU_192_IMEDIATO",
@@ -44,19 +45,18 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         severidade="emergencia",
         termos=[
             # Sinais clássicos de AVC (FAST)
-            "boca torta", "rosto caído", "rosto caido",
-            "fraqueza no rosto", "fraqueza no braço", "fraqueza no braco",
-            "não consigo falar", "nao consigo falar",
-            "fala enrolada", "não entendo o que falam", "nao entendo o que falam",
-            # Outros neurológicos graves
-            "avc", "derrame cerebral",
-            "pior dor de cabeça da vida", "pior dor de cabeca da vida",
-            "dor de cabeça súbita", "dor de cabeca subita",
-            "visão dupla", "visao dupla", "perda súbita de visão", "perda subita de visao",
-            "convulsão", "convulsao", "confusão mental", "confusao mental",
-            "desmaio", "perda de consciência", "perda de consciencia",
-            "paralisia", "paralisado", "paralisada",
-            "dormência súbita", "dormencia subita",
+            "boca torta", "rosto caído", "rosto caido", "rosto torto",
+            "fraqueza no rosto", "fraqueza no braço", "fraqueza no braco", "fraqueza na perna",
+            "não consigo falar", "nao consigo falar", "fala enrolada", "fala arrastada", "fala mole",
+            "não entendo o que falam", "nao entendo o que falam", "confusão mental", "confusao mental",
+            # Termos médicos e variações
+            "avc", "derrame cerebral", "derrame", "convulsão", "convulsao", "ataque epilético",
+            "pior dor de cabeça da vida", "pior dor de cabeca da vida", "dor de cabeça súbita", "dor de cabeca subita",
+            "visão dupla", "visao dupla", "perda súbita de visão", "perda subita de visao", "cegueira repentina",
+            # Desmaios e perda de sentido
+            "desmaio", "perda de consciência", "perda de consciencia", "apagou", "desmaiou", "não acorda", "nao acorda",
+            "paralisia", "paralisado", "paralisada", "metade do corpo adormecido", "não sinto meu corpo",
+            "dormência súbita", "dormencia subita", "repuxando", "tremendo muito",
         ],
         orientacao="Sintoma compatível com AVC ou emergência neurológica. Ligue imediatamente para o SAMU (192). Não ofereça água ou comida ao paciente.",
         protocolo_escalada="SAMU_192_IMEDIATO",
@@ -66,15 +66,16 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         nome="respiratoria",
         severidade="emergencia",
         termos=[
-            "falta de ar", "falta de ar intensa", "não consigo respirar", "nao consigo respirar",
-            "respiração difícil", "respiracao dificil",
-            "lábios roxos", "labios roxos", "rosto roxo",
+            # Termos técnicos
+            "falta de ar", "falta de ar intensa", "respiração difícil", "respiracao dificil", "asma grave",
             "saturação baixa", "saturacao baixa", "oxigênio baixo", "oxigenio baixo",
-            "chiado no peito intenso", "asma grave",
-            "sufocamento", "sufocando",
-            "engasgou e não respira", "engasgou e nao respira",
-            "labio muito roxo", "labio roxo", 
-            "fazendo muito esforco", "muito esforco", "esforco",
+            # Coloquialismos
+            "não consigo respirar", "nao consigo respirar", "sem ar", "ar não vem", "ar nao vem",
+            "sufocamento", "sufocando", "engasgou e não respira", "engasgou e nao respira", "afogando",
+            "chiado no peito intenso", "puxando o ar", "respiração ofegante", "cansado pra respirar",
+            # Sinais visuais
+            "lábios roxos", "labios roxos", "rosto roxo", "boca roxa", "labio muito roxo", "labio roxo",
+            "fazendo muito esforco", "muito esforco para respirar",
         ],
         orientacao="Dificuldade respiratória grave detectada. Ligue imediatamente para o SAMU (192). Mantenha o paciente sentado e calmo.",
         protocolo_escalada="SAMU_192_IMEDIATO",
@@ -84,12 +85,13 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         nome="alergica_anafilaxia",
         severidade="emergencia",
         termos=[
-            "anafilaxia", "choque anafilático", "choque anafilatico",
-            "urticária com falta de ar", "urticaria com falta de ar",
-            "alergia grave", "reação alérgica grave", "reacao alergica grave",
-            "inchaço na garganta", "inchaco na garganta",
-            "língua inchada", "lingua inchada",
-            "lábio inchado com dificuldade", "labio inchado com dificuldade",
+            # Termos técnicos
+            "anafilaxia", "choque anafilático", "choque anafilatico", "alergia grave", "reação alérgica grave", "reacao alergica grave",
+            # Sintomas físicos descritivos
+            "urticária com falta de ar", "urticaria com falta de ar", "empolado com falta de ar", "alergia no corpo todo",
+            "inchaço na garganta", "inchaco na garganta", "garganta fechando", "fechou a garganta",
+            "língua inchada", "lingua inchada", "não consigo engolir", "nao consigo engolir",
+            "lábio inchado com dificuldade", "labio inchado com dificuldade", "rosto desfigurado",
         ],
         orientacao="Suspeita de anafilaxia (reação alérgica grave). Ligue imediatamente para o SAMU (192). Se houver epinefrina (EpiPen) disponível, use conforme orientação médica prévia.",
         protocolo_escalada="SAMU_192_IMEDIATO",
@@ -99,12 +101,14 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         nome="sangramento_grave",
         severidade="emergencia",
         termos=[
-            "sangue esguichando", "não para de sangrar", "nao para de sangrar",
-            "corte profundo", "hemorragia", "sangramento intenso",
-            "sangue pela boca em quantidade", "vomitando sangue",
-            "fezes com muito sangue", "sangramento pós-operatório", "sangramento pos-operatorio",
+            # Termos descritivos e coloquiais
+            "sangue esguichando", "não para de sangrar", "nao para de sangrar", "sangrando muito", "jorrando sangue",
+            "corte profundo", "hemorragia", "sangramento intenso", "poça de sangue", "poca de sangue",
+            "sangue pela boca em quantidade", "vomitando sangue", "tossindo sangue",
+            "fezes com muito sangue", "evacuando sangue",
+            "sangramento pós-operatório", "sangramento pos-operatorio", "corte aberto", "rasgou a pele",
         ],
-        orientacao="Sangramento grave identificado. Aplique pressão direta no local. Ligue para o SAMU (192) imediatamente.",
+        orientacao="Sangramento grave identificado. Aplique pressão direta no local com um pano limpo. Ligue para o SAMU (192) imediatamente.",
         protocolo_escalada="SAMU_192_IMEDIATO",
     ),
 
@@ -112,13 +116,39 @@ CATEGORIAS_RED_FLAG: list[CategoriaRedFlag] = [
         nome="psiquiatrica_urgente",
         severidade="urgencia",
         termos=[
-            "quero me matar", "vou me matar", "não quero mais viver", "nao quero mais viver",
-            "pensamento de suicídio", "pensamento de suicidio",
-            "me machucar", "me machuquei de propósito", "me machuquei de proposito",
-            "ideação suicida", "ideacao suicida",
+            # Expressões de ideação
+            "quero me matar", "vou me matar", "não quero mais viver", "nao quero mais viver", "dar um fim em tudo", "acabar com tudo",
+            "pensamento de suicídio", "pensamento de suicidio", "ideação suicida", "ideacao suicida",
+            # Expressões de auto-mutilação
+            "me machucar", "me machuquei de propósito", "me machuquei de proposito", "cortar os pulsos", "cortei os pulsos",
+            "tomar todos os remédios", "tomar todos os remedios", "overdose",
         ],
-        orientacao="Crise de saúde mental identificada. Encaminhar para CVV (188, disponível 24h) e orientar busca imediata a pronto-socorro psiquiátrico ou UPA.",
+        orientacao="Crise de saúde mental identificada. Ligue imediatamente para o CVV (188, disponível 24h) ou busque um pronto-socorro psiquiátrico/UPA. Você não está sozinho.",
         protocolo_escalada="CVV_188_UPA",
+    ),
+
+    CategoriaRedFlag(
+        nome="trauma_acidente",
+        severidade="emergencia",
+        termos=[
+            "acidente de carro", "acidente de moto", "bateu a cabeça forte", "bateu a cabeca forte",
+            "queda de altura", "caiu da escada", "caiu do telhado", "fratura exposta", "osso pra fora",
+            "atropelamento", "atropelado", "acidente grave", "ferimento por arma", "tiro", "facada",
+        ],
+        orientacao="Trauma grave ou acidente identificado. Não mova a vítima a menos que haja risco iminente no local (ex: fogo). Ligue imediatamente para o SAMU (192) ou Bombeiros (193).",
+        protocolo_escalada="SAMU_192_IMEDIATO",
+    ),
+
+    CategoriaRedFlag(
+        nome="obstetrica",
+        severidade="emergencia",
+        termos=[
+            "grávida sangrando", "gravida sangrando", "bolsa estourou", "bolsa rompeu",
+            "sangramento na gravidez", "dor muito forte na barriga gravida", "bebê não mexe", "bebe nao mexe",
+            "contrações fortes", "contracoes fortes", "trabalho de parto", "eclâmpsia", "eclampsia",
+        ],
+        orientacao="Emergência obstétrica identificada. Dirija-se imediatamente à maternidade ou pronto-socorro obstétrico mais próximo, ou ligue para o SAMU (192).",
+        protocolo_escalada="SAMU_192_IMEDIATO",
     ),
 ]
 
