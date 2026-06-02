@@ -97,6 +97,13 @@ else:
                 
                 # Detecção de escalada lendo o alerta gerado pelo nó de emergência
                 texto_lower = texto_limpo.lower()
-                if "samu" in texto_lower or "pronto-socorro" in texto_lower or "emergência" in texto_lower:
+
+                # Lista bem mais ampla de palavras que indicam "condição" ou "prevenção"
+                termos_condicionais = ["se a dor", "se piorar", "caso ", "surgirem", "sintoma novo", "observe", "enquanto isso", "se necessário"]
+                
+                orientacao_preventiva = any(termo in texto_lower for termo in termos_condicionais)
+                tem_palavra_alerta = any(termo in texto_lower for termo in ["samu", "pronto-socorro", "emergência", "pronto‑socorro"]) # Inclui hífen normal e non-breaking
+                
+                if tem_palavra_alerta and not orientacao_preventiva:
                     st.session_state.emergencia = True
                     st.rerun()

@@ -116,7 +116,7 @@ As três tools obrigatórias foram implementadas com retornos simulados realista
 - **João Santos** (ID: 111222333) — 67 anos, diabético tipo 2, em uso de Metformina 850mg e Insulina Glargina, última consulta em 01/2026 com Dra. Silva (Endocrinologia).
 - **Ana Oliveira** (ID: 444555666) — 28 anos, sem comorbidades ou medicações contínuas, última consulta em 12/2025 com Dr. Pedro (Clínica Geral).
 - **Carlos Mendes** (ID: 777888999) — 52 anos, portador de Asma e Rinite Alérgica, em uso de Salbutamol spray e Loratadina 10mg, última consulta em 02/2026 com Dra. Costa (Pneumologia).
-- **Fernanda Lima** (ID: 321654987) — 45 anos, com Hipotireoidismo e Ansiedade, em uso de Levotiroxina 50mcg e Clonazepam 0,5mg, última consulta em 04/2026 com Dr.
+- **Fernanda Lima** (ID: 321654987) — 45 anos, com Hipotireoidismo e Ansiedade, em uso de Levotiroxina 50mcg e Clonazepam 0,5mg, última consulta em 04/2026 com Dr.Paulo (Psiquiatria).
 
 ### 4.2 Tools Implementadas
 
@@ -138,11 +138,13 @@ As três tools obrigatórias foram implementadas com retornos simulados realista
 
 Os guardrails operam em três níveis:
 
-**Nível 1 — Pré-LLM (Supervisor):** validação de escopo e moderação de conteúdo por palavras-chave antes de qualquer chamada ao modelo. Custo zero — não consome tokens.
+**Nível 1 — Pré-LLM (Supervisor):** Validação de escopo e moderação de conteúdo por palavras-chave antes de qualquer chamada ao modelo. Custo zero — não consome tokens.
 
-**Nível 2 — Red Flag Detection (Supervisor):** varredura da mensagem por um dicionário rico de sintomas de emergência categorizados por tipo (cardíaco, neurológico, respiratório, hemorrágico, anafilático). Quando detectado, roteia imediatamente para o agente de Escalada sem passar pelo LLM.
+**Nível 2 — Red Flag Detection (Supervisor):** Varredura da mensagem por um dicionário rico de sintomas de emergência categorizados por tipo (cardíaco, neurológico, respiratório, hemorrágico, anafilático). Quando detectado, roteia imediatamente para o agente de Escalada sem passar pelo LLM.
 
-**Nível 3 — Prompt Engineering (Triagem):** restrições explícitas no system prompt impedem que o LLM faça diagnósticos definitivos, prescreva medicamentos sem aprovação médica ou revele o conteúdo interno do sistema.
+**Nível 3 — Prompt Engineering (Triagem):** Restrições explícitas no system prompt impedem que o LLM faça diagnósticos definitivos, prescreva medicamentos sem aprovação médica ou revele o conteúdo interno do sistema.
+
+**Nível 4 — Pós-LLM (Interface Visual Streamlit):** Trava de segurança inteligente e em tempo real no frontend. O aplicativo analisa o texto de saída gerado pela IA e diferencia orientações preventivas condicionais (ex: "se a dor piorar, procure o PS") de ordens diretas de escalada. Se uma emergência real for detectada na instrução do modelo, a interface intercepta a comunicação, bloqueia a área de digitação do usuário e exibe uma tela vermelha de alerta, paralisando o atendimento virtual para garantir a segurança física e jurídica da operação.
 
 ### 5.2 Protocolo Human-in-the-Loop (HITL)
 

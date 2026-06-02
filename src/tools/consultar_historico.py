@@ -44,17 +44,22 @@ BANCO_DE_DADOS_PACIENTES = {
 def consultar_historico_paciente(paciente_id: str, janela_meses: int = 12) -> str:
     """
     Busca o histórico clínico completo do paciente na base da Care Plus.
-    Use esta ferramenta SEMPRE que precisar saber a idade, comorbidades ou 
-    medicações que o paciente já toma antes de fazer qualquer prescrição ou triagem.
     """
-    # Limpa o ID — remove espaços, pontos e traços que o LLM pode inserir
-    paciente_id_limpo = str(paciente_id).strip().replace(".", "").replace("-", "").replace(" ", "")
-    
-    print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id_limpo} (Janela: {janela_meses} meses)...")
-    
-    paciente = BANCO_DE_DADOS_PACIENTES.get(paciente_id_limpo)
-    
-    if paciente:
-        return json.dumps(paciente, ensure_ascii=False)
-    else:
-        return json.dumps({"erro": "Paciente não encontrado na base de dados da Care Plus."}, ensure_ascii=False)
+    try:
+        # Limpa o ID — remove espaços, pontos e traços que o LLM pode inserir
+        paciente_id_limpo = str(paciente_id).strip().replace(".", "").replace("-", "").replace(" ", "")
+        
+        print(f"⚙️ [TOOL] Buscando histórico do paciente ID: {paciente_id_limpo} (Janela: {janela_meses} meses)...")
+        
+        paciente = BANCO_DE_DADOS_PACIENTES.get(paciente_id_limpo)
+        
+        if paciente:
+            return json.dumps(paciente, ensure_ascii=False)
+        else:
+            return json.dumps({"erro": "Paciente não encontrado na base de dados da Care Plus."}, ensure_ascii=False)
+            
+    except Exception as e:
+        print(f"❌ [TOOL ERROR] Falha ao consultar histórico: {str(e)}")
+        return json.dumps({
+            "erro": f"Falha interna no sistema da Care Plus: {str(e)}. Peça desculpas ao paciente e tente prosseguir com a triagem manual."
+        }, ensure_ascii=False)

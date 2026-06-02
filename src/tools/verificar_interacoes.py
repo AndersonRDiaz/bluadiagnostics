@@ -9,23 +9,30 @@ def verificar_interacoes_medicamentosas(medicamentos_em_uso: Union[List[str], st
     Verifica interações medicamentosas perigosas entre os fármacos que o paciente já toma 
     e um novo medicamento sugerido. Obrigatório usar antes de qualquer recomendação.
     """
-    print(f"⚙️ [TOOL] Analisando interações: {medicamentos_em_uso} + {novo_medicamento}...")
-    
-    # Blindagem: se o LLM mandar uma string em vez de lista, nós convertemos
-    if isinstance(medicamentos_em_uso, str):
-        medicamentos_em_uso = [med.strip() for med in medicamentos_em_uso.split(',')]
+    try:
+        print(f"⚙️ [TOOL] Analisando interações: {medicamentos_em_uso} + {novo_medicamento}...")
         
-    novo_med_lower = novo_medicamento.lower()
-    em_uso_lower = [m.lower() for m in medicamentos_em_uso]
-    
-    if "ibuprofeno" in novo_med_lower or "diclofenaco" in novo_med_lower:
-        if any("losartana" in m for m in em_uso_lower):
-            return json.dumps({
-                "status": "ALERTA_GRAVE",
-                "mensagem": "O uso de anti-inflamatórios (AINEs) com Losartana pode reduzir o efeito anti-hipertensivo e causar agravamento renal."
-            }, ensure_ascii=False)
+        # Blindagem: se o LLM mandar uma string em vez de lista, nós convertemos
+        if isinstance(medicamentos_em_uso, str):
+            medicamentos_em_uso = [med.strip() for med in medicamentos_em_uso.split(',')]
             
-    return json.dumps({
-        "status": "SEGURO",
-        "mensagem": "Nenhuma interação grave identificada no banco de dados para esta combinação."
-    }, ensure_ascii=False)
+        novo_med_lower = novo_medicamento.lower()
+        em_uso_lower = [m.lower() for m in medicamentos_em_uso]
+        
+        if "ibuprofeno" in novo_med_lower or "diclofenaco" in novo_med_lower:
+            if any("losartana" in m for m in em_uso_lower):
+                return json.dumps({
+                    "status": "ALERTA_GRAVE",
+                    "mensagem": "O uso de anti-inflamatórios (AINEs) com Losartana pode reduzir o efeito anti-hipertensivo e causar agravamento renal."
+                }, ensure_ascii=False)
+                
+        return json.dumps({
+            "status": "SEGURO",
+            "mensagem": "Nenhuma interação grave identificada no banco de dados para esta combinação."
+        }, ensure_ascii=False)
+        
+    except Exception as e:
+        print(f"❌ [TOOL ERROR] Falha ao verificar interações: {str(e)}")
+        return json.dumps({
+            "erro": f"Falha na base de interações: {str(e)}. Alerte o paciente que a verificação de segurança automática falhou e que ele deve consultar um médico."
+        }, ensure_ascii=False)

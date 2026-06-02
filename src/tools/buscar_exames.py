@@ -37,15 +37,22 @@ def buscar_exames_paciente(paciente_id: str, tipo_exame: str = "todos") -> str:
     Busca os exames laboratoriais e clínicos recentes do paciente na base Care Plus.
     Use quando o paciente mencionar resultados de exames ou quiser saber seus últimos resultados.
     """
-    paciente_id_limpo = str(paciente_id).strip().replace(".", "").replace("-", "").replace(" ", "")
-    print(f"⚙️ [TOOL] Buscando exames do paciente ID: {paciente_id_limpo}...")
+    try:
+        paciente_id_limpo = str(paciente_id).strip().replace(".", "").replace("-", "").replace(" ", "")
+        print(f"⚙️ [TOOL] Buscando exames do paciente ID: {paciente_id_limpo}...")
 
-    exames = EXAMES_PACIENTES.get(paciente_id_limpo)
+        exames = EXAMES_PACIENTES.get(paciente_id_limpo)
 
-    if not exames:
-        return json.dumps({"erro": "Nenhum exame encontrado para este paciente."}, ensure_ascii=False)
+        if not exames:
+            return json.dumps({"erro": "Nenhum exame encontrado para este paciente."}, ensure_ascii=False)
 
-    if tipo_exame != "todos":
-        exames = [e for e in exames if tipo_exame.lower() in e["tipo"].lower()]
+        if tipo_exame != "todos":
+            exames = [e for e in exames if tipo_exame.lower() in e["tipo"].lower()]
 
-    return json.dumps({"exames": exames}, ensure_ascii=False)
+        return json.dumps({"exames": exames}, ensure_ascii=False)
+        
+    except Exception as e:
+        print(f"❌ [TOOL ERROR] Falha ao buscar exames: {str(e)}")
+        return json.dumps({
+            "erro": f"Falha interna no sistema de exames: {str(e)}. Informe ao paciente que os exames não puderam ser acessados no momento."
+        }, ensure_ascii=False)
