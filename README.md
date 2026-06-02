@@ -1,54 +1,93 @@
-# 🏥 BluaDiagnostics - Care Plus (FIAP Challenge)
+# 🩺 BluaDiagnostics - Care Plus | Sprint 4 (FIAP Challenge)
 
-**Disciplina:** Prompt and Artificial Intelligence
+**Disciplina:** Prompt and Artificial Intelligence (2026.1)  
+**Professor:** Jorge Luiz Gomes  
 
-**Projeto:** Agente Clínico Conversacional Seguro para o App Blua
-
-## 👥 Integrantes
-* Christian Raymundo Diaz - RM 568324
-* Hanin Atwi – RM 567626 
-* Giulia Martins Ferrari – RM 567574 
-* Dicley Lucas Neto – RM 567588  
-* Pedro Ivson Falcão de Leucas – RM 568522 
+O **BluaDiagnostics** é um sistema conversacional avançado com Inteligência Artificial desenvolvido para o aplicativo Blua da Care Plus (grupo Bupa). Neste Sprint 2, evoluímos de um chatbot tradicional para uma **Arquitetura Multi-Agente Autônoma**, materializando o check-up digital proativo e a triagem remota segura com total conformidade à LGPD.
 
 ---
 
-## 🎯 1. Persona Escolhida e Justificativa
-**Persona:** Beneficiário final (usuário leigo, 25–60 anos, usando o app Blua).
-**Justificativa Estratégica:** Escolhemos atuar diretamente com o paciente no momento inicial (pré-clínico), pois é a etapa de maior impacto e maior risco na jornada de saúde. 
-* **O Desafio:** Este usuário possui alto risco de entrar em pânico desnecessário ou, pelo contrário, minimizar sintomas graves (ex: achar que uma dor no peito irradiada é apenas gases).
-* **A Solução:** Nossa arquitetura foca em um agente com linguagem acolhedora, leiga e empática, sustentado por *guardrails* rígidos que impedem diagnósticos e forçam a escalada para pronto-socorro incondicional em caso de *Red Flags*, garantindo a segurança do paciente e otimizando o tempo do médico na etapa seguinte.
+👥 Equipe
+
+- Christian Raymundo Diaz - RM 568324
+- Hanin Atwi – RM 567626
+- Giulia Martins Ferrari – RM 567574
+- Dicley Lucas Neto – RM 567588
+- Pedro Ivson Falcão de Leucas – RM 568522
 
 ---
 
-## ⚖️ 2. Análise Comparativa de Modelos (Stack Tecnológico)
-Para a tomada de decisão do motor de Inteligência Artificial, avaliamos um modelo comercial de fronteira contra o modelo de grande porte Open-Source configurado em nossa infraestrutura através do Ollama.
+## 🌟 Principais Evoluções (Sprint 2)
 
-| Critério Técnico | `gpt-oss:120b` (Ollama - Escolhido) | `GPT-4o-mini` (OpenAI API) |
-| :--- | :--- | :--- |
-| **Latência Média** | ~10 a 15 segundos (Aferido na PoC visual studio code) | ~1 a 2 segundos |
-| **Custo por 1M Tokens** | **US$ 0,00** (Open-source, self-hosted) | ~US$ 0,15 (Input) / US$ 0,60 (Output) |
-| **Janela de Contexto** | Alta capacidade de processamento de contexto | 128k tokens |
-| **Privacidade / LGPD** | **Máxima (100% On-premise / Nuvem Privada).** Nenhum dado de saúde sai da infraestrutura da Care Plus. | Risco Moderado. Exige contratos complexos corporativos, pois os dados trafegam para servidores externos de terceiros. |
-
-**Justificativa da Escolha (`gpt-oss:120b` via Ollama):**
-Em um cenário de saúde suplementar regido pela LGPD (Dados Sensíveis), a privacidade dos dados clínicos é um pilar inegociável. Optamos pelo `gpt-oss:120b` rodando via Ollama por ser um modelo robusto de parâmetros massivos, altamente capaz de interpretar instruções complexas de triagem e estruturação de dados em JSON. Ele elimina o custo de transação por token e garante o isolamento completo do histórico clínico (comorbidades e medicações) dentro da infraestrutura própria. A latência observada atende perfeitamente a proposta de um check-up inicial assíncrono.
+* **Orquestração Multi-Agente (LangGraph):** Implementação de um nó Supervisor que realiza o roteamento dinâmico de contexto entre Agentes Especialistas (`Triagem`, `Prescrição` e `Escalada`), mantendo estado e memória (HITL).
+* **Integração RAG Local:** Motor de busca vetorial integrado a protocolos médicos e cartilhas de saúde (ChromaDB + Embeddings Locais).
+* **Suite de Tools Avançada (Function Calling):** Agentes com capacidade de tomada de decisão para invocar 5 ferramentas reais em bancos de dados simulados.
+* **Segurança em 4 Níveis (Guardrails Clínicos):** Do bloqueio pré-LLM à trava visual de emergência no Streamlit.
 
 ---
 
-## ⚠️ 3. Riscos Clínicos Mapeados e Mitigações Específicas
-Sistemas conversacionais em saúde lidam diretamente com vidas humanas. Abaixo, detalhamos os riscos inerentes à persona e as mitigações implementadas:
+## 🏗️ Arquitetura do Sistema
 
-1. **Risco de Subtriagem em Casos Graves (Minimização):** O paciente relatar um sintoma crítico (como infarto ou AVC) e a IA prosseguir com uma triagem comum de rotina.
-   * *Mitigação:* Implementação estrita e prioritária da seção `# RED FLAGS` no *System Prompt*. A IA atua como um guardrail ativo: ao detectar palavras-chave ou descrições associadas a emergências, ela interrompe imediatamente o fluxo conversacional, altera a variável `"proxima_acao": "escalada_humana"` e instrui o contato imediato com o SAMU (192) ou ida ao pronto-socorro.
-2. **Risco de Prescrição Inadequada ou Exercício Ilegal da Medicina:** O modelo sugerir ou indicar dosagens de medicamentos de forma autônoma.
-   * *Mitigação:* Protocolo rígido de *Human-in-the-Loop* (HITL). O prompt proíbe categoricamente qualquer tipo de conduta terapêutica direta. As interações coletadas geram apenas um relatório interno estruturado enviado ao médico, mantendo o profissional humano como único decisor e validador legal da receita.
-3. **Risco de Alucinação sobre Dados do Paciente ou Interações:** O modelo inventar dados sobre o paciente ou julgar incorretamente a combinação de medicamentos.
-   * *Mitigação:* Uso integrado de determinismo por meio de **Function Calling** (`consultar_historico_paciente`, `verificar_interacoes_medicamentosas`) e injeção de contexto por **RAG** baseado em bulas e protocolos de Manchester oficiais. O modelo não gera o conhecimento clínico de forma criativa, ele apenas consome dados consolidados do banco da Care Plus.
+O sistema opera em um grafo de estados cíclico (`supervisor → [triagem | escalada | prescrição]`), permitindo que a IA acione ferramentas, analise o retorno e retome a conversa de forma autônoma.
+
+![Arquitetura do Sistema](./docs/arquitetura_sistema.png)
+
+### 🛠️ Stack Tecnológico
+* **Orquestração:** LangGraph 0.2.70 / LangChain 0.3.25
+* **Modelos (Local/Ollama):** `gpt-oss:120b` (idealizado) simulado via `llama3` para inferência rápida e `nomic-embed-text` para vetorização.
+* **Vector Store:** ChromaDB 0.5.23
+* **Frontend:** Streamlit 1.35.0
+* **Qualidade e Evals:** Pytest 8.3.5 / Pydantic 2.10.6
 
 ---
 
-## 🏗️ 4. Fluxograma da Arquitetura do Sistema
-O diagrama abaixo ilustra o fluxo exato da nossa Prova de Conceito (PoC), demonstrando a orquestração de chamadas de ferramentas, checagem de regras de segurança e o processamento do modelo centralizado:
+## ⚙️ Ferramentas Autônomas (Function Calling)
 
-![Fluxograma da Arquitetura BluaDiagnostics](./docs/arquitetura.png)
+A IA tem autonomia para cruzar dados chamando as seguintes *tools*:
+1.  **`consultar_historico_paciente`**: Busca alergias, comorbidades e medicações de uso contínuo no banco de dados.
+2.  **`verificar_interacoes_medicamentosas`**: Analisa o risco entre remédios atuais e novas propostas de tratamento.
+3.  **`buscar_exames_paciente`**: Varre o sistema atrás de laudos laboratoriais e de imagem recentes.
+4.  **`registrar_sintoma_vital`**: Estrutura sinais e dores em JSON padronizado para o prontuário.
+5.  **`agendar_teleconsulta`**: Finaliza o fluxo marcando a consulta na especialidade e urgência adequadas.
+
+---
+
+## 🛡️ Guardrails Clínicos (Níveis de Segurança)
+
+Para mitigar o risco de alucinações e proteger a vida do paciente, o sistema conta com:
+1.  **Nível 1 (Pré-LLM):** Supervisor com validação de escopo e *Red Flags* (Custo zero de tokens).
+2.  **Nível 2 (Roteamento Dinâmico):** Desvio automático para o Agente de Escalada se sintomas cardíacos ou neurológicos severos forem detectados na entrada.
+3.  **Nível 3 (Prompt Engineering):** O modelo é estritamente proibido de dar diagnósticos finais e atua apenas sob protocolo *Human-in-the-Loop*.
+4.  **Nível 4 (Pós-LLM no Frontend):** O Streamlit intercepta diretrizes de emergência da IA (ex: "Procure o SAMU") e trava fisicamente a interface de chat, forçando o atendimento presencial.
+
+---
+
+## 🚀 Como Executar o Projeto (Passo a Passo)
+
+Para garantir a privacidade absoluta dos dados clínicos (LGPD), este projeto foi arquitetado para rodar 100% localmente (On-premise).
+
+### Passo 1: Preparando o Ambiente Python
+Clone o repositório, crie o ambiente virtual e instale as dependências:
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate | Mac/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+
+### Passo 2: Inicializando o Motor de IA (Ollama)
+Certifique-se de ter o Ollama instalado e rodando em segundo plano. Em seguida, baixe:
+
+# Modelo de vetorização para o RAG
+ollama pull nomic-embed-text
+
+
+### Passo 3: Alimentando a Base de Conhecimento (Vector Store)
+Processe os protocolos médicos e cartilhas de saúde executando o script de ingestão:
+
+python src/rag/ingest.py
+
+### Passo 4: Rodando a Interface (Streamlit)
+Com o Ollama rodando e o banco RAG populado, suba a aplicação:
+
+streamlit run app/streamlit_app.py
+
+O sistema abrirá automaticamente em http://localhost:8501.
