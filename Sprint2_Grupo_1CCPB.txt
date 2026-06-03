@@ -11,10 +11,10 @@ Entrega Final - Sprint 2
 - Pedro Ivson Falcão de Leucas - RM 568522
 
 2. REPOSITÓRIO GITHUB (Público):
-Link: 
+Link: https://github.com/AndersonRDiaz/bluadiagnostics/tree/sprint2
 
 3. VÍDEO DE DEMONSTRAÇÃO (YouTube - Não Listado):
 Link:
 
 4. RELATÓRIO TÉCNICO FINAL:
-Link: 
+Link: https://github.com/AndersonRDiaz/bluadiagnostics/blob/sprint2/docs/relatorio_final.md
